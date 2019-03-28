@@ -87,9 +87,9 @@ def holdingMeeting(request):
     date = request.POST.get('date')
     Time = request.POST.get('time')
     Venue = request.POST.get('venue')
-    Minutes_File = request.POST.get('minutes_file')
+    Agenda = request.POST.get('agenda')
     """inserting a new record with these values in database"""
-    p = Meeting(venue=Venue, date=date, time=Time, agenda=Agenda, minutes_file=Minutes_File)
+    p = Meeting(venue=Venue, date=date, time=Time, agenda=Agenda)
     p.save()
     return HttpResponse('ll')
 
