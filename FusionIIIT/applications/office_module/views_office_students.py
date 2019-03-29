@@ -120,7 +120,14 @@ def meetingMinutes(request):
 def hostelRoomAllotment(request):
 
     hall_no=request.POST.get('hall_no')
-    hostel_allotment_object.save()
+    year=request.POST.get('year')
+    gender=request.POST.get('gender')
+    num_students=request.POST.get('num_students')
+    remarks=request.POST.get('remarks')
+    program=request.POST.get('program')
+
+    p = hostel_allotment(hall_no=hall_no, year=year, gender=gender, number_students=num_students, remark=remarks, program=program)
+    p.save()
     return HttpResponseRedirect('/office/officeOfDeanStudents')
 
 @login_required
