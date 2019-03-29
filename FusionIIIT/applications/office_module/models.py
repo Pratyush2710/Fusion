@@ -44,9 +44,10 @@ class Constants:
     )
 
     HALL_NO = (
-        ('HALL-1','hall-1'),
-        ('HALL-3','hall-3'),
-        ('HALL-4','hall-4'),
+        ('HALL-1-BOYS', 'hall-1-boys'),
+        ('HALL-1-GIRLS', 'hall-1-girls'),
+        ('HALL-3', 'hall-3'),
+        ('HALL-4', 'hall-4'),
     )
     DEPARTMENT=(
 		('civil','civil'),
