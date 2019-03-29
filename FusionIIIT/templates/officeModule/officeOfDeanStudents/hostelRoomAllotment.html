@@ -105,6 +105,21 @@
 
 		</div>
 	</div>
+		<b>Remaining Hall Capacities</b>
+		<div class="ui statistics">
+		{% for i in capacity %}
+<div class="blue statistic">
+    <div class="value">
+		{{ i.capacity }}
+    </div>
+    <div class="label">
+      {{ i.name }}
+    </div>
+  </div>
+
+{% endfor %}
+			</div>
+		<br>
 
 <button class="ui button" type="submit">Submit</button>
 	</form>
