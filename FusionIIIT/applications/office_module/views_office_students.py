@@ -2,7 +2,7 @@
 from django.shortcuts import render , get_object_or_404
 from django.http import HttpResponse , HttpResponseRedirect
 from applications.academic_information.models import Meeting
-from .models import Constants,hostel_allotment,Budget
+from .models import Constants,hostel_allotment,Budget, hostel_capacity
 from applications.gymkhana.models import Club_budget,Club_info, Session_info
 from applications.globals.models import *
 import json
@@ -40,6 +40,7 @@ def officeOfDeanStudents(request):
     budget_allotment = Club_info.objects.all().filter(status='confirmed')
     budget_alloted = Club_info.objects.all().exclude(alloted_budget=0)
     designation = HoldsDesignation.objects.all().filter(working=request.user)
+    capacity = hostel_capacity.objects.all()
 
     # getting roll and designation(s) of the active user in roll_
     desig = list(HoldsDesignation.objects.all().filter(working = request.user).values_list('designation'))
@@ -50,10 +51,10 @@ def officeOfDeanStudents(request):
         roll_.append(str(name_.name))
 
     # getting hostel allotment entries corresponding to each Hall
-    HALL_NO = {'hall':['HALL-1-BOYS''HALL-1-GIRLS','HALL-3', 'hall-3''HALL-4']}
-    PROGRAM = {'program': ['BTECH', 'BDES', 'MTECH', 'MDES', 'PHD']}
-    YEARS = { 'years': ['FIRST-YEAR','SECOND-YEAR','THIRD-YEAR''FOURTH-YEAR']}
-    GENDER = {'gender': ['MALE', 'FEMALE']}
+    HALL_NO = ['HALL-1-BOYS''HALL-1-GIRLS','HALL-3', 'hall-3''HALL-4']
+    PROGRAM = ['BTECH', 'BDES', 'MTECH', 'MDES', 'PHD']
+    YEARS = ['FIRST-YEAR','SECOND-YEAR','THIRD-YEAR''FOURTH-YEAR']
+    GENDER = ['MALE', 'FEMALE']
 
     context = {'meetingMinutes': minutes,
                 'final_minutes': final_minutes,
@@ -116,9 +117,8 @@ def meetingMinutes(request):
 
 @login_required
 def hostelRoomAllotment(request):
-    file=request.FILES['hostel_file']
+
     hall_no=request.POST.get('hall_no')
-    hostel_allotment_object=hostel_allotment(allotment_file=file, hall_no=hall_no)
     hostel_allotment_object.save()
     return HttpResponseRedirect('/office/officeOfDeanStudents')
 
