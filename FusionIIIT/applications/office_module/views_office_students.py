@@ -50,15 +50,17 @@ def officeOfDeanStudents(request):
         roll_.append(str(name_.name))
 
     # getting hostel allotment entries corresponding to each Hall
-    HALL_NO = (('HALL-1', 'hall-1'), ('HALL-3', 'hall-3'), ('HALL-4', 'hall-4'))
-    hall=[]
-    for i in HALL_NO:
-        if str(i[1]):
-            hall.append(str(i[1]))
+    HALL_NO = {'hall':['HALL-1-BOYS''HALL-1-GIRLS','HALL-3', 'hall-3''HALL-4']}
+    PROGRAM = {'program': ['BTECH', 'BDES', 'MTECH', 'MDES', 'PHD']}
+    YEARS = { 'years': ['FIRST-YEAR','SECOND-YEAR','THIRD-YEAR''FOURTH-YEAR']}
+    GENDER = {'gender': ['MALE', 'FEMALE']}
 
     context = {'meetingMinutes': minutes,
                 'final_minutes': final_minutes,
-                'hall': hall,
+                'hall': HALL_NO,
+                'program': PROGRAM,
+                'years': YEARS,
+                'gender': GENDER,
                 'hall_allotment': hall_allotment,
                 'budget_app': budget_app,
                 'p_budget': past_budget,
@@ -116,7 +118,7 @@ def meetingMinutes(request):
 def hostelRoomAllotment(request):
     file=request.FILES['hostel_file']
     hall_no=request.POST.get('hall_no')
-    hostel_allotment_object=hostel_allotment(allotment_file=file,hall_no=hall_no)
+    hostel_allotment_object=hostel_allotment(allotment_file=file, hall_no=hall_no)
     hostel_allotment_object.save()
     return HttpResponseRedirect('/office/officeOfDeanStudents')
 
