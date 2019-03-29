@@ -33,10 +33,79 @@
 </div>
 
 	<div class="eight wide field">
-    <label>Allotment file(.xls)</label>
-    <input type="file" name="hostel_file" placeholder="Allotment File" >
+    <label>Program</label>
+		<div class="ui selection dropdown">
+  	<input type="hidden" name="hall_no">
+  	<i class="dropdown icon"></i>
+  	<div class="default text">B.Tech/M.Tech/B.Des/M.Des/PhD</div>
+  	<div class="menu">
+
+      {% for i in hall %}
+
+
+
+    <div class="item" data-value="{{ i }}">{{ i }}</div>
+
+      {% endfor %}
+  </div>
+</div>
+
+		</div>
+	</div>
+
+		<div class="fields">
+	<div class="eight wide field">
+	<label>Year</label>
+	<div class="ui selection dropdown">
+  	<input type="hidden" name="hall_no">
+  	<i class="dropdown icon"></i>
+  	<div class="default text">First/Second/Third/Fourth/Fifth Year</div>
+  	<div class="menu">
+
+      {% for i in hall %}
+
+
+
+    <div class="item" data-value="{{ i }}">{{ i }}</div>
+
+      {% endfor %}
+  </div>
 </div>
 </div>
+
+	<div class="eight wide field">
+    <label>Gender</label>
+		<div class="ui selection dropdown">
+  	<input type="hidden" name="hall_no">
+  	<i class="dropdown icon"></i>
+  	<div class="default text">Male/Female</div>
+  	<div class="menu">
+
+      {% for i in hall %}
+
+
+
+    <div class="item" data-value="{{ i }}">{{ i }}</div>
+
+      {% endfor %}
+  </div>
+</div>
+
+		</div>
+	</div>
+		<div class="fields">
+	<div class="eight wide field">
+	<label>No. of Students</label>
+		<input type="number" placeholder="No. of Students">
+</div>
+
+	<div class="eight wide field">
+    <label>Remark</label>
+			<textarea name="" id="" cols="12" rows="3" placeholder="Optional description"></textarea>
+
+		</div>
+	</div>
+
 <button class="ui button" type="submit">Submit</button>
 	</form>
 </div>
