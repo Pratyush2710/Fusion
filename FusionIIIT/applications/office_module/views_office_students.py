@@ -40,7 +40,7 @@ def officeOfDeanStudents(request):
     budget_allotment = Club_info.objects.all().filter(status='confirmed')
     budget_alloted = Club_info.objects.all().exclude(alloted_budget=0)
     designation = HoldsDesignation.objects.all().filter(working=request.user)
-    capacity = hostel_capacity.objects.all()
+    CAPACITY = hostel_capacity.objects.all()
 
     # getting roll and designation(s) of the active user in roll_
     desig = list(HoldsDesignation.objects.all().filter(working = request.user).values_list('designation'))
@@ -62,6 +62,7 @@ def officeOfDeanStudents(request):
                 'program': PROGRAM,
                 'years': YEARS,
                 'gender': GENDER,
+                'capacity': CAPACITY,
                 'hall_allotment': hall_allotment,
                 'budget_app': budget_app,
                 'p_budget': past_budget,
