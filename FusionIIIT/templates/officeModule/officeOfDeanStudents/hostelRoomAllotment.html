@@ -128,20 +128,27 @@
 	<table class="ui very basic celled table">
 		<thead>
 		<tr>
-			<th class= "eight wide">HAll</th>
-			<th class= "eight wide">File</th>
-			<th class = "eight wide">Delete</th>
-			
+			<th class= "four wide">Program</th>
+			<th class= "four wide">Year</th>
+			<th class = "four wide">Gender</th>
+			<th class = "four wide">Hall Number</th>
+			<th class = "four wide">Students</th>
+			<th class = "four wide">Remarks</th>
+			<th class = "four wide">Delete</th>
+
 		</tr>
 	</thead>
 	<tr>
 	{% for items in hall_allotment %}
+		<td >{{ items.program }}</td>
+		<td >{{ items.year }}</td>
+		<td >{{ items.gender }}</td>
 		<td >{{ items.hall_no }}</td>
-		<td><a class="ui inverted circular icon button" style="margin: auto;"  href="/media/{{ items.allotment_file }}" target="blank">
-                            <i class="large attach black icon"></i>
-                        </a></td>
+		<td >{{ items.number_students }}</td>
+		<td >{{ items.remarks }}</td>
 		<td>
-			<button class="ui button" type="submit">Cancel</button>
+			<button class="mini ui button" type="submit"><svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+width="20" height="20" viewBox="0 0 24 24" style=" fill:#000;"><path d="M 10 2 L 9 3 L 4 3 L 4 5 L 7 5 L 17 5 L 20 5 L 20 3 L 15 3 L 14 2 L 10 2 z M 5 7 L 5 20 C 5 21.1 5.9 22 7 22 L 17 22 C 18.1 22 19 21.1 19 20 L 19 7 L 5 7 z"></path></svg></button>
 		</td>
 	</tr>
   {% endfor %}

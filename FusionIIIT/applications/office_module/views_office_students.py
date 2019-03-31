@@ -51,9 +51,9 @@ def officeOfDeanStudents(request):
         roll_.append(str(name_.name))
 
     # getting hostel allotment entries corresponding to each Hall
-    HALL_NO = ['HALL-1-BOYS''HALL-1-GIRLS','HALL-3', 'hall-3''HALL-4']
+    HALL_NO = ['HALL-1-BOYS','HALL-1-GIRLS','HALL-3','HALL-4']
     PROGRAM = ['BTECH', 'BDES', 'MTECH', 'MDES', 'PHD']
-    YEARS = ['FIRST-YEAR','SECOND-YEAR','THIRD-YEAR''FOURTH-YEAR']
+    YEARS = ['FIRST-YEAR','SECOND-YEAR','THIRD-YEAR','FOURTH-YEAR']
     GENDER = ['MALE', 'FEMALE']
 
     context = {'meetingMinutes': minutes,
@@ -126,8 +126,15 @@ def hostelRoomAllotment(request):
     remarks=request.POST.get('remarks')
     program=request.POST.get('program')
 
+
+
     p = hostel_allotment(hall_no=hall_no, year=year, gender=gender, number_students=num_students, remark=remarks, program=program)
     p.save()
+
+    capacity = hostel_capacity.objects.get(name=hall_no)
+    capacity.capacity = capacity.capacity - int(num_students)
+    capacity.save()
+
     return HttpResponseRedirect('/office/officeOfDeanStudents')
 
 @login_required
