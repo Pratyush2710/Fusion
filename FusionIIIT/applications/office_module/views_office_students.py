@@ -113,7 +113,7 @@ def meetingMinutes(request):
     meeting_object=Meeting.objects.get(pk=id)
     meeting_object.minutes_file=file
     meeting_object.save()
-    #return HttpResponseRedirect('/office/officeOfDeanStudents/first')
+    return HttpResponseRedirect('/office/officeOfDeanStudents')
     return render(request, "officeModule/officeModule/officeOfDeanStudents/holdingMeetings.html", context)
 
 @login_required
