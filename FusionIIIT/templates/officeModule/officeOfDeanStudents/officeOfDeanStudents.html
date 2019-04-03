@@ -13,18 +13,31 @@
         {% include 'dashboard/navbar.html' %}
     {% endblock %}
 
-    <!--The grid starts here!-->
+   {% comment %}The grid starts here!{% endcomment %}
     <div class="ui stackable doubling grid">
 
-        <!--The left-margin segment!-->
+         {% comment %}The left-margin segment!{% endcomment %}
         <div class="column"></div>
 
-        <!--
+                {% comment %}
             The left-rail segment starts here!
-        -->
+        {% endcomment %}
         <div class="three wide column">
 
-            <!--The Tab-Menu starts here!-->
+             {% comment %}The user image card starts here!{% endcomment %}
+            {% block usercard %}
+
+                {% comment %}
+                TODO: Instead of Name write the position like "Office Of Dean Students!"
+                {% endcomment %}
+
+                {% include 'globals/usercard.html' %}
+            {% endblock %}
+            {% comment %}The user image card ends here!{% endcomment %}
+
+            <div class="ui divider"></div>
+
+            {% comment %}The Tab-Menu starts here!{% endcomment %}
 
             <div class="ui huge fluid vertical pointing menu" style="max-width: 320px;">
                 {% if "Dean_s" in all_designation %}
@@ -72,7 +85,7 @@
                     </a>
                 {% endif %}
             </div>
-            <!--The Tab-Menu ends here!-->
+            {% comment %}The Tab-Menu ends here!{% endcomment %}
     </div>
         <!--
             The left-rail segment ends here!
