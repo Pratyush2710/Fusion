@@ -78,7 +78,7 @@ class Course(models.Model):
 
 class Meeting(models.Model):
     venue = models.CharField(max_length=50)
-    date = models.DateField(null=True, blank=True)
+    date = models.DateField()
     time = models.CharField(max_length=20)
     agenda = models.TextField()
     minutes_file = models.FileField(upload_to="")
