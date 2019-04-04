@@ -1,3 +1,4 @@
+{% load static %}
 {% block hostelRoomAllotment%}
 
 <h3>Hostel Allotment</h3>
@@ -10,25 +11,25 @@
     </a>
 </div>
 <div class="ui tab active segment" data-tab="new_allotment">
-    <form class="ui  form" action="hostelRoomAllotment/"  enctype="multipart/form-data" method="post">
+    <form class="ui form" onsubmit="validate();return false" name="hostel" id="hostel" enctype="multipart/form-data" method="post">
         {% csrf_token %}
         <div class="fields">
             <div class="eight wide field">
                 <label>Hall No.</label>
-                <select class="ui fluid search dropdown" name="hall_no">
+                <select class="ui fluid search dropdown" name="hall_no" id="hall_no" onchange="setHall(this)">
                     <option value="">Hall Number</option>
                     {% for i in hall %}
-                    <option value={{ i }}>{{ i }}</option>
+                    <option value="{{ i }}">{{ i }}</option>
                     {% endfor %}
                 </select>
             </div>
 
             <div class="eight wide field">
                 <label>Program</label>
-                <select class="ui fluid search dropdown" name="program">
+                <select class="ui fluid search dropdown" name="program" id="program" onchange="setProgram(this)">
                     <option value="">B.Tech/M.Tech/B.Des/M.Des/PhD</option>
                     {% for i in program %}
-                    <option value={{ i }}>{{ i }}</option>
+                    <option value="{{ i }}">{{ i }}</option>
                     {% endfor %}
                 </select>
 
@@ -37,20 +38,20 @@
 
         <div class="fields"><div class="eight wide field">
                 <label>Year</label>
-                <select class="ui fluid search dropdown" name="years">
+                <select class="ui fluid search dropdown" name="year" id="year" onchange="setYear(this)">
                     <option value="">First/Second/Third/Fourth/Fifth Year</option>
                     {% for i in years %}
-                    <option value={{ i }}>{{ i }}</option>
+                    <option value="{{ i }}">{{ i }}</option>
                     {% endfor %}
                 </select>
             </div>
 
             <div class="eight wide field">
                 <label>Gender</label>
-                <select class="ui fluid search dropdown" name="gender">
+                <select class="ui fluid search dropdown" name="gender" id="gender" onchange="setGender(this)">
                     <option value="">Male/Female</option>
                     {% for i in gender %}
-                    <option value={{ i }}>{{ i }}</option>
+                    <option value="{{ i }}">{{ i }}</option>
                     {% endfor %}
                 </select>
 
@@ -59,12 +60,12 @@
         <div class="fields">
             <div class="eight wide field">
                 <label>No. of Students</label>
-                <input type="number" placeholder="No. of Students" name="num_students">
+                <input type="number" oninput="setNumStudents(this)" placeholder="No. of Students" name="num_students" id="num_students">
             </div>
 
             <div class="eight wide field">
                 <label>Remark</label>
-                <textarea name="remarks" id="" cols="12" rows="3" placeholder="Optional description" ></textarea>
+                <textarea name="remarks" id="remarks" cols="12" rows="3" placeholder="Optional description" onchange="setRemarks(this)"></textarea>
 
             </div>
         </div>
@@ -110,8 +111,11 @@
             <td >{{ items.number_students }}</td>
             <td >{{ items.remarks }}</td>
             <td>
-                <button class="mini ui button" type="submit"><svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+                <form action="deleteHostelRoomAllotment/" method="post">
+                    {% csrf_token %}
+                <button class="mini ui button" type="submit" value="{{ items.id }}" name="delete"><svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
                                                                   width="20" height="20" viewBox="0 0 24 24" style=" fill:#000;"><path d="M 10 2 L 9 3 L 4 3 L 4 5 L 7 5 L 17 5 L 20 5 L 20 3 L 15 3 L 14 2 L 10 2 z M 5 7 L 5 20 C 5 21.1 5.9 22 7 22 L 17 22 C 18.1 22 19 21.1 19 20 L 19 7 L 5 7 z"></path></svg></button>
+                </form>
             </td>
         </tr>
         {% endfor %}
@@ -119,4 +123,87 @@
 
 </div>
 
-{%endblock hostelRoomAllotment%}
+<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
+<script>
+var hall, prg, yr, gnd, num_st;
+function setHall(sel)
+{
+    hall = sel.value;
+    console.log(hall);
+    document.getElementById("hall_no").value = sel.value;
+    {% for i in capacity %}
+    if ("{{ i.name }}" == hall){
+        document.getElementById("num_students").max = {{ i.capacity }};
+        console.log(document.getElementById("num_students").max);
+
+    }
+    {% endfor %}
+}
+function setProgram(sel)
+{
+    prg = sel.value;
+    document.getElementById("program").value = sel.value;
+    console.log(prg);
+}
+function setYear(sel)
+{
+    yr = sel.value;
+    document.getElementById("year").value = sel.value;
+    console.log(yr);
+}
+function setGender(sel)
+{
+    gnd = sel.value;
+    document.getElementById("gender").value = sel.value;
+    console.log(gnd);
+}
+function setNumStudents(sel)
+{
+    document.getElementById("num_students").value = sel.value;
+    console.log(sel.value);
+}
+function setRemarks(sel)
+{
+    document.getElementById("remarks").value = sel.value;
+    console.log(sel.value);
+}
+</script>
+<script>
+function validate(){
+    var num_st = document.getElementById("num_students").value;
+    var cap = document.getElementById("num_students").max;
+    console.log(num_st);
+    console.log(cap);
+    if (num_st > cap){
+        document.getElementById("num_students").value = 0;
+        alert("Hostel Limit Exceeded!")
+
+    }
+    else{
+        $.ajax({
+        type: 'POST',
+        url: 'http://localhost:8000/office/officeOfDeanStudents/hostelRoomAllotment',
+        data: {
+          'hall_no': document.getElementById("hall_no").value,
+          'program': document.getElementById("program").value,
+          'year': document.getElementById("year").value,
+          'gender': document.getElementById("gender").value,
+          'num_students': document.getElementById("num_students").value,
+          'remarks': document.getElementById("remarks").value,
+          csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']").val(),
+        },
+        dataType: 'json',
+        success: function (data) {
+          if (data.alloted) {
+            alert("Hostel Alloted Succesfully");
+            document.forms["hostel"].reset();
+          }
+        }
+      });
+    }
+    return false;
+}
+</script>
+
+{% endblock hostelRoomAllotment%}
+<script type="text/javascript" src="{% static 'globals/js/datepicker.js' %}"></script>
