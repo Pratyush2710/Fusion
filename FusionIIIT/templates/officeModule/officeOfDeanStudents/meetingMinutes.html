@@ -13,7 +13,7 @@
                      <table class="ui very basic  celled table">
                          <thead>
                                             <tr>
-                                                <th>Title</th>
+                                                <th>Agenda</th>
                                                 <th>Time</th>
                                                 <th>Venue</th>
                                                 <th>Date</th>
@@ -26,7 +26,7 @@
                                 <form class="ui  form" action="meeting_Minutes/" method="post" enctype="multipart/form-data">
                                     {% csrf_token %}
                                     {% for details in meetingMinutes%}
-                                <td>{{  details.title }}</td>
+                                <td>{{  details.agenda }}</td>
                                 <td>{{  details.time }}</td>
                                 <td>{{  details.venue }}</td>
                                 <td>{{  details.date }}
@@ -48,7 +48,7 @@
                     <table class="ui very basic  celled table">
                         <thead>
                                             <tr>
-                                                <th>Title</th>
+                                                <th>Agenda</th>
                                                 <th>Time</th>
                                                 <th>Date</th>
                                                  <th>Venue</th>
@@ -57,7 +57,7 @@
                         </thead>
                         <tr>
                             {% for details in final_minutes%}
-                                <td>{{  details.title }}</td>
+                                <td>{{  details.agenda }}</td>
                                 <td>{{  details.time }}</td>
                                 <td>{{  details.date }}</td>
                                 <td>{{  details.venue }}</td>

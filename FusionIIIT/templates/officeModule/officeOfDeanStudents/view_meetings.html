@@ -2,7 +2,7 @@
 <table class="ui very basic  celled table" id="view_meeting">
                         <thead>
                                             <tr>
-                                                <th>Title</th>
+                                                <th>Agenda</th>
                                                 <th>Time</th>
                                                 <th>Date</th>
                                                  <th>Venue</th>
@@ -13,7 +13,7 @@
                         
                             {% for details in final_minutes %}
                             <tr onclick="modals('{{ details.pk }}')">
-                                <td>{{  details.title }}</td>
+                                <td>{{  details.agenda }}</td>
                                 <td>{{  details.time }}</td>
                                 <td>{{  details.date }}</td>
                                 <td>{{  details.venue }}</td>
@@ -28,7 +28,7 @@
                        
                             {% for details in meetingMinutes%}
                              <tr class="error" onclick="modals('{{ details.pk }}')">
-                                <td>{{  details.title }}</td>
+                                <td>{{  details.agenda }}</td>
                                 <td>{{  details.time }}</td>
                                 <td>{{  details.date }}</td>
                                 <td>{{  details.venue }}

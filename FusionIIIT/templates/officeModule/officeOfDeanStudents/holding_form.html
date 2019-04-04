@@ -1,18 +1,4 @@
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <title></title>
-    <link href="http://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css" rel="Stylesheet"
-        type="text/css" />
-    <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
-    <script type="text/javascript" src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
 
- <script language="javascript">
-        $(document).ready(function () {
-            $("#txtdate").datepicker({
-                minDate: 0
-            });
-        });
-    </script>
 <script type="text/javascript">
     function sub(){
         var f = $('#meeting_form').serialize();
@@ -56,10 +42,6 @@
 
     }
 </script>
-</head>
-<body>
-
-
 
 
 <form class="ui  form"  id="meeting_form">
@@ -81,7 +63,7 @@
              
             <div class="eight wide field">
             <label>Date</label>
-            <input id="txtdate" name="date" type="text" required>
+            <input type="date" name="date" type="text" required>
             </div>
             <div class="eight wide field">
             <label>Time</label>
@@ -107,6 +89,4 @@
         -->
         <input type="submit" class="ui button" onclick="sub()" value="submit" >
 </form>  
-</body>
-</html>
 
