@@ -55,6 +55,7 @@ urlpatterns = [
     url(r'^officeOfDeanStudents/holding_meeting', views.holdingMeeting, name='holdingMeetings'),
     url(r'^officeOfDeanStudents/meeting_Minutes', views.meetingMinutes, name='meetingMinutes'),
     url(r'^officeOfDeanStudents/hostelRoomAllotment', views.hostelRoomAllotment),
+    url(r'^officeOfDeanStudents/deleteHostelRoomAllotment', views.deleteHostelRoomAllotment),
     url(r'^officeOfDeanStudents/budget_approval', views.budgetApproval),
     url(r'^officeOfDeanStudents/budget_rejection', views.budgetRejection),
     url(r'^officeOfDeanStudents/club_approval', views.clubApproval),
