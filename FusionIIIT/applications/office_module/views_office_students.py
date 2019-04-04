@@ -116,9 +116,8 @@ def meetingMinutes(request):
     return HttpResponseRedirect('/office/officeOfDeanStudents')
     return render(request, "officeModule/officeModule/officeOfDeanStudents/holdingMeetings.html", context)
 
-@login_required
 def hostelRoomAllotment(request):
-
+    alloted = False
     hall_no=request.POST.get('hall_no')
     year=request.POST.get('year')
     gender=request.POST.get('gender')
@@ -126,16 +125,36 @@ def hostelRoomAllotment(request):
     remarks=request.POST.get('remarks')
     program=request.POST.get('program')
 
-
-
     p = hostel_allotment(hall_no=hall_no, year=year, gender=gender, number_students=num_students, remark=remarks, program=program)
     p.save()
+    print("Hall no: ", request.POST.get('hall_no'))
+
+    capacity = hostel_capacity.objects.get(name=request.POST.get('hall_no'))
+    print("Capacity.capacity: ", capacity.capacity)
+    capacity.capacity = int(capacity.capacity) - int(num_students)
+    capacity.save()
+    alloted = True
+
+    data = {
+        'alloted': alloted
+    }
+    return JsonResponse(data)
+
+@login_required()
+def deleteHostelRoomAllotment(request):
+    id = request.POST.get('delete')
+    print("Delete record: ", id)
+    hall_no = hostel_allotment.objects.get(id=id).hall_no
+    num_students = hostel_allotment.objects.get(id=id).number_students
 
     capacity = hostel_capacity.objects.get(name=hall_no)
-    capacity.capacity = capacity.capacity - int(num_students)
+    capacity.capacity = int(capacity.capacity) + int(num_students)
     capacity.save()
 
+
+    hostel_allotment.objects.get(id=id).delete()
     return HttpResponseRedirect('/office/officeOfDeanStudents')
+
 
 @login_required
 def budgetApproval(request):
