@@ -26,7 +26,8 @@ from django.contrib.auth.decorators import login_required
     5.    HoldsDesignation  |  designation     |  Designation of the active user
 """
 
-def getUniversalContext(request, page):
+
+def getUniversalContext(request, page, err_msg = 'none'):
     budget_app = Club_budget.objects.all().filter(status='open')
     past_budget = Club_budget.objects.all().exclude(status='open')
     minutes = Meeting.objects.all().filter(minutes_file="")
@@ -75,8 +76,10 @@ def getUniversalContext(request, page):
                'budget_alloted': budget_alloted,
                'all_designation': roll_,
                'page': page,
+               'err_msg': err_msg
                }
     return context
+
 
 @login_required
 def officeOfDeanStudents(request):
@@ -95,12 +98,15 @@ def officeOfDeanStudents(request):
         page = 6
     return render(request, "officeModule/officeOfDeanStudents/officeOfDeanStudents.html", getUniversalContext(request, page=page))
 
+
 """
     View for the meeting being called by Dean_Student
     Inputs:- Agenda, Date, Time, Venue, Minutes_File
         (*) Minutes file is to be added by JuniorSuprintendent
     An object holdMeeting object is being created and accessed in the holding_form.html template. 
 """
+
+
 @login_required
 def holdingMeeting(request):
 
@@ -132,7 +138,11 @@ def meetingMinutes(request):
     meeting_object.save()
     return render(request, 'officeModule/officeOfDeanStudents/officeOfDeanStudents.html', getUniversalContext(request,page=6))
 
+
+@login_required
 def hostelRoomAllotment(request):
+
+    err_msg = 'none'
     hall_no=request.POST.get('hall_no')
     year=request.POST.get('year')
     gender=request.POST.get('gender')
@@ -140,20 +150,28 @@ def hostelRoomAllotment(request):
     remarks=request.POST.get('remarks')
     program=request.POST.get('program')
 
-    print("hall no obtained : ", hall_no)
-    #saving the new allotment
-    p = hostel_allotment(hall_no=hall_no, year=year, gender=gender, number_students=num_students, remark=remarks, program=program)
-    p.save()
+    if hall_no == 'HALL-1-GIRLS' and gender == 'MALE':
+        err_msg = 'Boys cannont reside in ' + hall_no
+    elif gender == 'FEMALE' and hall_no != 'HALL-1-GIRLS':
+        err_msg = 'Girls cannot reside in ' + hall_no
+    else:
+        print("hall no obtained : ", hall_no)
+        #saving the new allotment
+        p = hostel_allotment(hall_no=hall_no, year=year, gender=gender, number_students=num_students, remark=remarks, program=program)
+        p.save()
 
-    #changing the capacity
-    capacity = hostel_capacity.objects.get(name=hall_no)
-    if (int(capacity.current_capacity) - int(num_students)) >= 0:
-        capacity.current_capacity = int(capacity.current_capacity) - int(num_students)
-        capacity.save()
+        #changing the capacity
+        capacity = hostel_capacity.objects.get(name=hall_no)
+        if (int(capacity.current_capacity) - int(num_students)) >= 0:
+            capacity.current_capacity = int(capacity.current_capacity) - int(num_students)
+            capacity.save()
+        else:
+            err_msg = 'Hostel Limit Exceeded!'
+    print("error msg : " + err_msg)
+    return render(request, 'officeModule/officeOfDeanStudents/officeOfDeanStudents.html', getUniversalContext(request,page=7,err_msg=err_msg))
 
-    return render(request, 'officeModule/officeOfDeanStudents/officeOfDeanStudents.html', getUniversalContext(request,page=7))
 
-@login_required()
+@login_required
 def deleteHostelRoomAllotment(request):
     id = request.POST.get('delete')
     print("Delete record: ", id)
@@ -203,6 +221,7 @@ def budgetApproval(request):
         Club_info_object.save()
     return render(request, 'officeModule/officeOfDeanStudents/officeOfDeanStudents.html', getUniversalContext(request, page=2))
 
+
 @login_required
 def budgetRejection(request):
     id_r=request.POST.getlist('check')
@@ -215,17 +234,17 @@ def budgetRejection(request):
     return render(request, 'officeModule/officeOfDeanStudents/officeOfDeanStudents.html', getUniversalContext(request, page=2))
 
 
-
-
 """
     View for club Approval initiated by the Dean_S
     Inputs:- Club name, coordinator, cocoordinator details, designation
     Output :- Updates the club approval status to approved        
     An object Club_info_object is created and accessed in newClubApprovalsModal.html 
 """
+
+
 @login_required
 def clubApproval(request):
-    id_r=request.POST.getlist('check')
+    id_r = request.POST.getlist('check')
     """changing club approval status from open to confirmed and added to the field"""
     for i in range(len(id_r)):
         Club_info_object=Club_info.objects.get(pk=id_r[i])
@@ -249,6 +268,7 @@ def clubApproval(request):
     An object Club_info_object is created and accessed in newClubApprovalsModal.html 
 """
 
+
 @login_required
 def clubRejection(request):
     id_r=request.POST.getlist('check')
@@ -266,6 +286,7 @@ def clubRejection(request):
     An object Club_info_object saves the file and accessed in budgetAllotmentModal.html
 """
 
+
 @login_required
 def budgetAllot(request):
     id_r=request.POST.get('id')
@@ -277,12 +298,12 @@ def budgetAllot(request):
     return render(request, 'officeModule/officeOfDeanStudents/officeOfDeanStudents.html', getUniversalContext(request,page=10))
 
 
-
 """
     View for the budgetALlotEdit initiated by the Junior Suprintendent
     Output: club alloted budget, availed budget, spent budget
     An object Club_info_object saves the file and is accessed in budgetAllotmentModal.html 
 """
+
 
 @login_required
 def budgetAllotEdit(request):
