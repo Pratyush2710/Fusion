@@ -30,7 +30,7 @@
         {% csrf_token %}
         <div class="fields">
             <div class="eight wide field">
-                <label>Hall No.</label>
+                <label>Hall No.<text style="color: red;">  *</text></label>
                 <select class="ui fluid search dropdown" name="hall_no" id="hall_no" onchange="setHall(this)">
                     <option value="">Hall Number</option>
                     {% for i in hall %}
@@ -40,7 +40,7 @@
             </div>
 
             <div class="eight wide field">
-                <label>Program</label>
+                <label>Program<text style="color: red;">  *</text></label>
                 <select class="ui fluid search dropdown" name="program" id="program" onchange="setProgram(this)">
                     <option value="">B.Tech/M.Tech/B.Des/M.Des/PhD</option>
                     {% for i in program %}
@@ -52,7 +52,7 @@
         </div>
 
         <div class="fields"><div class="eight wide field">
-                <label>Year</label>
+                <label>Year<text style="color: red;">  *</text></label>
                 <select class="ui fluid search dropdown" name="year" id="year" onchange="setYear(this)">
                     <option value="">First/Second/Third/Fourth/Fifth Year</option>
                     {% for i in years %}
@@ -62,7 +62,7 @@
             </div>
 
             <div class="eight wide field">
-                <label>Gender</label>
+                <label>Gender<text style="color: red;">  *</text></label>
                 <select class="ui fluid search dropdown" name="gender" id="gender" onchange="setGender(this)">
                     <option value="">Male/Female</option>
                     {% for i in gender %}
@@ -74,7 +74,7 @@
         </div>
         <div class="fields">
             <div class="eight wide field">
-                <label>No. of Students</label>
+                <label>No. of Students<text style="color: red;">  *</text></label>
                 <input type="number" oninput="setNumStudents(this)" placeholder="No. of Students" name="num_students" id="num_students">
             </div>
 
@@ -100,8 +100,24 @@
         </div>
         <br>
 
-        <button class="ui button" type="submit">Submit</button>
+        <button class="ui button" type="submit" onclick="checkFun()">Submit</button>
     </form>
+<script>
+    function checkFun(event){
+    event.preventDefault();
+    $('#hostel')
+  .form({
+    fields: {
+      hall_no  : 'empty',
+      program  : 'empty',
+      year     : 'empty',
+      gender   : 'empty',
+      num_students: 'empty'
+    }
+  })
+;
+    }
+</script>
 </div>
 <div class="ui tab segment" data-tab="Allotment">
     <form action="http://localhost:8000/office/officeOfDeanStudents/deleteAllHostelRoomAllotment/" method="post">
