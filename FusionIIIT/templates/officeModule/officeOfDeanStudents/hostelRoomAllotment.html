@@ -14,7 +14,7 @@
     </a>
 </div>
 <div class="ui tab active segment" data-tab="new_allotment">
-    <form class="ui form"  action="hostelRoomAllotment/" name="hostel" id="hostel" enctype="multipart/form-data" method="post">
+    <form class="ui form"  action="http://localhost:8000/office/officeOfDeanStudents/hostelRoomAllotment/" name="hostel" id="hostel" enctype="multipart/form-data" method="post">
         <!--onsubmit="validate();return false"-->
         {% csrf_token %}
         <div class="fields">
@@ -78,7 +78,7 @@
             {% for i in capacity %}
             <div class="blue statistic" >
                 <div class="value">
-                    {{ i.current_capacity }} <h3>/ {{i.total_capacity}}</h3>
+                    {{ i.current_capacity }} <h3>/ {{ i.total_capacity }}</h3>
                 </div>
                 <div class="label">
                     {{ i.name }}
@@ -93,7 +93,7 @@
     </form>
 </div>
 <div class="ui tab segment" data-tab="Allotment">
-    <form action="deleteAllHostelRoomAllotment/" method="post">
+    <form action="http://localhost:8000/office/officeOfDeanStudents/deleteAllHostelRoomAllotment/" method="post">
                     {% csrf_token %}
                 <button class="ui button" type="submit" name="delete"> Delete All </button>
                 </form>
@@ -119,7 +119,7 @@
             <td >{{ items.number_students }}</td>
             <td >{{ items.remarks }}</td>
             <td>
-                <form action="deleteHostelRoomAllotment/" method="post">
+                <form action="http://localhost:8000/office/officeOfDeanStudents/deleteHostelRoomAllotment/" method="post">
                     {% csrf_token %}
                 <button class="mini ui button" type="submit" value="{{ items.id }}" name="delete"><svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
                                                                   width="20" height="20" viewBox="0 0 24 24" style=" fill:#000;"><path d="M 10 2 L 9 3 L 4 3 L 4 5 L 7 5 L 17 5 L 20 5 L 20 3 L 15 3 L 14 2 L 10 2 z M 5 7 L 5 20 C 5 21.1 5.9 22 7 22 L 17 22 C 18.1 22 19 21.1 19 20 L 19 7 L 5 7 z"></path></svg></button>

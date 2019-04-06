@@ -133,7 +133,6 @@ def meetingMinutes(request):
     return render(request, 'officeModule/officeOfDeanStudents/officeOfDeanStudents.html', getUniversalContext(request,page=6))
 
 def hostelRoomAllotment(request):
-    alloted = False
     hall_no=request.POST.get('hall_no')
     year=request.POST.get('year')
     gender=request.POST.get('gender')
@@ -141,27 +140,17 @@ def hostelRoomAllotment(request):
     remarks=request.POST.get('remarks')
     program=request.POST.get('program')
 
+    print("hall no obtained : ", hall_no)
+    #saving the new allotment
     p = hostel_allotment(hall_no=hall_no, year=year, gender=gender, number_students=num_students, remark=remarks, program=program)
     p.save()
-    print("Hall no: ", hall_no)
 
+    #changing the capacity
     capacity = hostel_capacity.objects.get(name=hall_no)
-    print("Capacity.capacity: ", capacity.current_capacity)
-    cap = []
     if (int(capacity.current_capacity) - int(num_students)) >= 0:
         capacity.current_capacity = int(capacity.current_capacity) - int(num_students)
         capacity.save()
-        alloted = True
-        CAPACITY = hostel_capacity.objects.all()
-        for item in CAPACITY:
-            cap.append([item.name, item.current_capacity])
 
-    data = {
-        'alloted': alloted,
-        'capacity': cap,
-        'page': 7,
-    }
-    #return JsonResponse(data)
     return render(request, 'officeModule/officeOfDeanStudents/officeOfDeanStudents.html', getUniversalContext(request,page=7))
 
 @login_required()
@@ -178,10 +167,8 @@ def deleteHostelRoomAllotment(request):
         capacity.current_capacity = capacity.total_capacity
     capacity.save()
 
-
     hostel_allotment.objects.get(id=id).delete()
     return render(request, 'officeModule/officeOfDeanStudents/officeOfDeanStudents.html', getUniversalContext(request, page=7))
-    #return HttpResponseRedirect('/office/officeOfDeanStudents')
 
 
 @login_required
@@ -193,7 +180,7 @@ def deleteAllHostelRoomAllotment(request):
     capacity = hostel_capacity.objects.all()
     for item in capacity:
         item.current_capacity = item.total_capacity
-    capacity.save()
+        item.save()
 
     return render(request, 'officeModule/officeOfDeanStudents/officeOfDeanStudents.html', getUniversalContext(request, page=7))
 
