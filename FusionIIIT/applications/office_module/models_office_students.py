@@ -83,7 +83,8 @@ class hostel_allotment(models.Model):
 class hostel_capacity(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=15, choices=Constants.HALL_NO, default='')
-    capacity = models.PositiveIntegerField(default=0)
+    current_capacity = models.PositiveIntegerField(default=0)
+    total_capacity = models.PositiveIntegerField(default=0)
 
     class Meta:
         db_table = "hostel_capacity"

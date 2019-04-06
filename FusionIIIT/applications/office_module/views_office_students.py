@@ -1,6 +1,6 @@
 
 from django.shortcuts import render , get_object_or_404
-from django.http import HttpResponse , HttpResponseRedirect
+from django.http import HttpResponse , HttpResponseRedirect, JsonResponse
 from applications.academic_information.models import Meeting
 from .models import Constants,hostel_allotment,Budget, hostel_capacity
 from applications.gymkhana.models import Club_budget,Club_info, Session_info
@@ -25,8 +25,8 @@ from django.contrib.auth.decorators import login_required
                             |  budgets         |  Clubs which are approved
     5.    HoldsDesignation  |  designation     |  Designation of the active user
 """
-@login_required
-def officeOfDeanStudents(request):
+
+def getUniversalContext(request, page):
     budget_app = Club_budget.objects.all().filter(status='open')
     past_budget = Club_budget.objects.all().exclude(status='open')
     minutes = Meeting.objects.all().filter(minutes_file="")
@@ -43,40 +43,57 @@ def officeOfDeanStudents(request):
     CAPACITY = hostel_capacity.objects.all()
 
     # getting roll and designation(s) of the active user in roll_
-    desig = list(HoldsDesignation.objects.all().filter(working = request.user).values_list('designation'))
+    desig = list(HoldsDesignation.objects.all().filter(working=request.user).values_list('designation'))
     b = [i for sub in desig for i in sub]
-    roll_=[]
-    for i in b :
-        name_ = get_object_or_404(Designation, id = i)
+    roll_ = []
+    for i in b:
+        name_ = get_object_or_404(Designation, id=i)
         roll_.append(str(name_.name))
 
     # getting hostel allotment entries corresponding to each Hall
-    HALL_NO = ['HALL-1-BOYS','HALL-1-GIRLS','HALL-3','HALL-4']
+    HALL_NO = ['HALL-1-BOYS', 'HALL-1-GIRLS', 'HALL-3', 'HALL-4']
     PROGRAM = ['BTECH', 'BDES', 'MTECH', 'MDES', 'PHD']
-    YEARS = ['FIRST-YEAR','SECOND-YEAR','THIRD-YEAR','FOURTH-YEAR']
+    YEARS = ['FIRST-YEAR', 'SECOND-YEAR', 'THIRD-YEAR', 'FOURTH-YEAR']
     GENDER = ['MALE', 'FEMALE']
 
     context = {'meetingMinutes': minutes,
-                'final_minutes': final_minutes,
-                'hall': HALL_NO,
-                'program': PROGRAM,
-                'years': YEARS,
-                'gender': GENDER,
-                'capacity': CAPACITY,
-                'hall_allotment': hall_allotment,
-                'budget_app': budget_app,
-                'p_budget': past_budget,
-                'clubNew': clubNew,
-                'session_requests' : session_requests,
-                'club': club,
-                'budgets': budgets,
-                'approved_budgets': approved_budgets,
-                'budget_allotment': budget_allotment,
-                'budget_alloted': budget_alloted,
-                'all_designation': roll_,
-              }
+               'final_minutes': final_minutes,
+               'hall': HALL_NO,
+               'program': PROGRAM,
+               'years': YEARS,
+               'gender': GENDER,
+               'capacity': CAPACITY,
+               'hall_allotment': hall_allotment,
+               'budget_app': budget_app,
+               'p_budget': past_budget,
+               'clubNew': clubNew,
+               'session_requests': session_requests,
+               'club': club,
+               'budgets': budgets,
+               'approved_budgets': approved_budgets,
+               'budget_allotment': budget_allotment,
+               'budget_alloted': budget_alloted,
+               'all_designation': roll_,
+               'page': page,
+               }
+    return context
 
-    return render(request, "officeModule/officeOfDeanStudents/officeOfDeanStudents.html", context)
+@login_required
+def officeOfDeanStudents(request):
+
+    # getting roll and designation(s) of the active user in roll_
+    desig = list(HoldsDesignation.objects.all().filter(working=request.user).values_list('designation'))
+    b = [i for sub in desig for i in sub]
+    roll_ = []
+    for i in b:
+        name_ = get_object_or_404(Designation, id=i)
+        roll_.append(str(name_.name))
+    page=0
+    if 'Dean_s' in roll_:
+        page = 0
+    elif 'Junior Superintendent' in roll_:
+        page = 6
+    return render(request, "officeModule/officeOfDeanStudents/officeOfDeanStudents.html", getUniversalContext(request, page=page))
 
 """
     View for the meeting being called by Dean_Student
@@ -95,7 +112,7 @@ def holdingMeeting(request):
     """inserting a new record with these values in database"""
     p = Meeting(venue=Venue, date=date, time=Time, agenda=Agenda)
     p.save()
-    return HttpResponse('ll')
+    return render(request, 'officeModule/officeOfDeanStudents/officeOfDeanStudents.html', getUniversalContext(request, page=1))
 
 
 """
@@ -113,8 +130,7 @@ def meetingMinutes(request):
     meeting_object=Meeting.objects.get(pk=id)
     meeting_object.minutes_file=file
     meeting_object.save()
-    return HttpResponseRedirect('/office/officeOfDeanStudents')
-    return render(request, "officeModule/officeModule/officeOfDeanStudents/holdingMeetings.html", context)
+    return render(request, 'officeModule/officeOfDeanStudents/officeOfDeanStudents.html', getUniversalContext(request,page=6))
 
 def hostelRoomAllotment(request):
     alloted = False
@@ -127,18 +143,26 @@ def hostelRoomAllotment(request):
 
     p = hostel_allotment(hall_no=hall_no, year=year, gender=gender, number_students=num_students, remark=remarks, program=program)
     p.save()
-    print("Hall no: ", request.POST.get('hall_no'))
+    print("Hall no: ", hall_no)
 
-    capacity = hostel_capacity.objects.get(name=request.POST.get('hall_no'))
-    print("Capacity.capacity: ", capacity.capacity)
-    capacity.capacity = int(capacity.capacity) - int(num_students)
-    capacity.save()
-    alloted = True
+    capacity = hostel_capacity.objects.get(name=hall_no)
+    print("Capacity.capacity: ", capacity.current_capacity)
+    cap = []
+    if (int(capacity.current_capacity) - int(num_students)) >= 0:
+        capacity.current_capacity = int(capacity.current_capacity) - int(num_students)
+        capacity.save()
+        alloted = True
+        CAPACITY = hostel_capacity.objects.all()
+        for item in CAPACITY:
+            cap.append([item.name, item.current_capacity])
 
     data = {
-        'alloted': alloted
+        'alloted': alloted,
+        'capacity': cap,
+        'page': 7,
     }
-    return JsonResponse(data)
+    #return JsonResponse(data)
+    return render(request, 'officeModule/officeOfDeanStudents/officeOfDeanStudents.html', getUniversalContext(request,page=7))
 
 @login_required()
 def deleteHostelRoomAllotment(request):
@@ -148,12 +172,30 @@ def deleteHostelRoomAllotment(request):
     num_students = hostel_allotment.objects.get(id=id).number_students
 
     capacity = hostel_capacity.objects.get(name=hall_no)
-    capacity.capacity = int(capacity.capacity) + int(num_students)
+    if (int(capacity.current_capacity) + int(num_students)) <= capacity.total_capacity:
+        capacity.current_capacity = int(capacity.current_capacity) + int(num_students)
+    else:
+        capacity.current_capacity = capacity.total_capacity
     capacity.save()
 
 
     hostel_allotment.objects.get(id=id).delete()
-    return HttpResponseRedirect('/office/officeOfDeanStudents')
+    return render(request, 'officeModule/officeOfDeanStudents/officeOfDeanStudents.html', getUniversalContext(request, page=7))
+    #return HttpResponseRedirect('/office/officeOfDeanStudents')
+
+
+@login_required
+def deleteAllHostelRoomAllotment(request):
+    #deleting all allotments
+    hostel_allotment.objects.all().delete()
+
+    #resetting capacities to max
+    capacity = hostel_capacity.objects.all()
+    for item in capacity:
+        item.current_capacity = item.total_capacity
+    capacity.save()
+
+    return render(request, 'officeModule/officeOfDeanStudents/officeOfDeanStudents.html', getUniversalContext(request, page=7))
 
 
 @login_required
@@ -172,18 +214,18 @@ def budgetApproval(request):
         Club_info_object.avail_budget = (availBudget - int(budget))
         Club_budget_object.save()
         Club_info_object.save()
-    return HttpResponseRedirect('/office/officeOfDeanStudents')
+    return render(request, 'officeModule/officeOfDeanStudents/officeOfDeanStudents.html', getUniversalContext(request, page=2))
 
 @login_required
 def budgetRejection(request):
     id_r=request.POST.getlist('check')
     remark=request.POST.getlist('remark')
     for i in range(len(id_r)):
-        Club_budget_object=Club_budget.objects.get(id=id_r[i]);
+        Club_budget_object=Club_budget.objects.get(id=id_r[i])
         Club_budget_object.status='rejected'
         Club_budget_object.remarks=request.POST.get(id_r[i])
         Club_budget_object.save()
-    return HttpResponseRedirect('/office/officeOfDeanStudents')
+    return render(request, 'officeModule/officeOfDeanStudents/officeOfDeanStudents.html', getUniversalContext(request, page=2))
 
 
 
@@ -210,9 +252,7 @@ def clubApproval(request):
         HoldsDesig.save()
         HoldsDesig = HoldsDesignation( user= co_co, working= co_co, designation=designation1)
         HoldsDesig.save()
-    return HttpResponseRedirect('/office/officeOfDeanStudents')
-    return render(request, "officeModule/officeModule / officeOfDeanStudents / newClubApprovals.html", context)
-
+    return render(request, 'officeModule/officeOfDeanStudents/officeOfDeanStudents.html', getUniversalContext(request, page=5))
 
 
 """
@@ -226,7 +266,7 @@ def clubApproval(request):
 def clubRejection(request):
     id_r=request.POST.getlist('check')
     for i in range(len(id_r)):
-        Club_info_object=Club_info.objects.get(pk=id_r[i]);
+        Club_info_object=Club_info.objects.get(pk=id_r[i])
         Club_info_object.status='rejected'
         Club_info_object.save()
     return HttpResponseRedirect('/office/officeOfDeanStudents')
@@ -247,7 +287,7 @@ def budgetAllot(request):
     Club_info_object.alloted_budget=int(budget)
     Club_info_object.avail_budget= int(budget)
     Club_info_object.save()
-    return HttpResponseRedirect('/office/officeOfDeanStudents')
+    return render(request, 'officeModule/officeOfDeanStudents/officeOfDeanStudents.html', getUniversalContext(request,page=10))
 
 
 
@@ -266,4 +306,4 @@ def budgetAllotEdit(request):
     Club_info_object.avail_budget= int(budget)
     Club_info_object.spent_budget= int(0)
     Club_info_object.save()
-    return HttpResponseRedirect('/office/officeOfDeanStudents')
+    return render(request, 'officeModule/officeOfDeanStudents/officeOfDeanStudents.html', getUniversalContext(request,page=10))
