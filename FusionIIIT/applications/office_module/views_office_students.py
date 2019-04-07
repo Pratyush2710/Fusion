@@ -27,7 +27,7 @@ from django.contrib.auth.decorators import login_required
 """
 
 
-def getUniversalContext(request, page, err_msg = 'none'):
+def getUniversalContext(request, page, err_msg = 'none', success_msg = 'none'):
     budget_app = Club_budget.objects.all().filter(status='open')
     past_budget = Club_budget.objects.all().exclude(status='open')
     minutes = Meeting.objects.all().filter(minutes_file="")
@@ -76,7 +76,8 @@ def getUniversalContext(request, page, err_msg = 'none'):
                'budget_alloted': budget_alloted,
                'all_designation': roll_,
                'page': page,
-               'err_msg': err_msg
+               'err_msg': err_msg,
+               'success_msg': success_msg
                }
     return context
 
@@ -143,6 +144,7 @@ def meetingMinutes(request):
 def hostelRoomAllotment(request):
 
     err_msg = 'none'
+    success_msg = 'none'
     hall_no=request.POST.get('hall_no')
     year=request.POST.get('year')
     gender=request.POST.get('gender')
@@ -166,14 +168,16 @@ def hostelRoomAllotment(request):
         if (int(capacity.current_capacity) - int(num_students)) >= 0:
             capacity.current_capacity = int(capacity.current_capacity) - int(num_students)
             capacity.save()
+            success_msg = 'Hall Alloted Successfully'
         else:
             err_msg = 'Hostel Limit Exceeded!'
     print("error msg : " + err_msg)
-    return render(request, 'officeModule/officeOfDeanStudents/officeOfDeanStudents.html', getUniversalContext(request,page=7,err_msg=err_msg))
+    return render(request, 'officeModule/officeOfDeanStudents/officeOfDeanStudents.html', getUniversalContext(request,page=7,err_msg=err_msg,success_msg=success_msg))
 
 
 @login_required
 def deleteHostelRoomAllotment(request):
+    
     id = request.POST.get('delete')
     print("Delete record: ", id)
     hall_no = hostel_allotment.objects.get(id=id).hall_no
@@ -187,7 +191,8 @@ def deleteHostelRoomAllotment(request):
     capacity.save()
 
     hostel_allotment.objects.get(id=id).delete()
-    return render(request, 'officeModule/officeOfDeanStudents/officeOfDeanStudents.html', getUniversalContext(request, page=7))
+    success_msg = 'Hostel Allotment Deleted Successfully'
+    return render(request, 'officeModule/officeOfDeanStudents/officeOfDeanStudents.html', getUniversalContext(request, page=7, success_msg=success_msg))
 
 
 @login_required
@@ -201,7 +206,8 @@ def deleteAllHostelRoomAllotment(request):
         item.current_capacity = item.total_capacity
         item.save()
 
-    return render(request, 'officeModule/officeOfDeanStudents/officeOfDeanStudents.html', getUniversalContext(request, page=7))
+    success_msg = 'All Allotments Deleted Successfully'
+    return render(request, 'officeModule/officeOfDeanStudents/officeOfDeanStudents.html', getUniversalContext(request, page=7, success_msg=success_msg))
 
 
 @login_required
@@ -311,8 +317,8 @@ def budgetAllotEdit(request):
     id_r=request.POST.get('id')
     budget= request.POST.get('budget')
     Club_info_object= Club_info.objects.get(pk=id_r)
-    Club_info_object.alloted_budget=int(budget)
-    Club_info_object.avail_budget= int(budget)
-    Club_info_object.spent_budget= int(0)
+    Club_info_object.alloted_budget = int(budget)
+    Club_info_object.avail_budget = int(budget)
+    Club_info_object.spent_budget = int(0)
     Club_info_object.save()
     return render(request, 'officeModule/officeOfDeanStudents/officeOfDeanStudents.html', getUniversalContext(request,page=10))

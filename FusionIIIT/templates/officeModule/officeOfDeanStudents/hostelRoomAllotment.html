@@ -15,6 +15,14 @@
 </div>
 <div class="ui tab active segment" data-tab="new_allotment">
 
+    {% if success_msg != 'none' %}
+    <div class="ui success message">
+        <i class="close icon"></i>
+        <div class="header">
+          {{ success_msg }}
+        </div>
+    </div>
+    {% endif %}
     {% if err_msg != 'none' %}
     <div class="ui error message">
             <i class="close icon"></i>
@@ -28,10 +36,11 @@
     <form class="ui form"  action="http://localhost:8000/office/officeOfDeanStudents/hostelRoomAllotment/" name="hostel" id="hostel" enctype="multipart/form-data" method="post">
         <!--onsubmit="validate();return false"-->
         {% csrf_token %}
+        <!-- <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}"/> -->
         <div class="fields">
             <div class="eight wide field">
                 <label>Hall No.<text style="color: red;">  *</text></label>
-                <select class="ui fluid search dropdown" name="hall_no" id="hall_no" onchange="setHall(this)">
+                <select class="ui fluid search dropdown" name="hall_no" id="hall_no">
                     <option value="">Hall Number</option>
                     {% for i in hall %}
                     <option value="{{ i }}">{{ i }}</option>
@@ -41,7 +50,7 @@
 
             <div class="eight wide field">
                 <label>Program<text style="color: red;">  *</text></label>
-                <select class="ui fluid search dropdown" name="program" id="program" onchange="setProgram(this)">
+                <select class="ui fluid search dropdown" name="program" id="program">
                     <option value="">B.Tech/M.Tech/B.Des/M.Des/PhD</option>
                     {% for i in program %}
                     <option value="{{ i }}">{{ i }}</option>
@@ -53,7 +62,7 @@
 
         <div class="fields"><div class="eight wide field">
                 <label>Year<text style="color: red;">  *</text></label>
-                <select class="ui fluid search dropdown" name="year" id="year" onchange="setYear(this)">
+                <select class="ui fluid search dropdown" name="year" id="year">
                     <option value="">First/Second/Third/Fourth/Fifth Year</option>
                     {% for i in years %}
                     <option value="{{ i }}">{{ i }}</option>
@@ -63,7 +72,7 @@
 
             <div class="eight wide field">
                 <label>Gender<text style="color: red;">  *</text></label>
-                <select class="ui fluid search dropdown" name="gender" id="gender" onchange="setGender(this)">
+                <select class="ui fluid search dropdown" name="gender" id="gender">
                     <option value="">Male/Female</option>
                     {% for i in gender %}
                     <option value="{{ i }}">{{ i }}</option>
@@ -75,12 +84,12 @@
         <div class="fields">
             <div class="eight wide field">
                 <label>No. of Students<text style="color: red;">  *</text></label>
-                <input type="number" oninput="setNumStudents(this)" placeholder="No. of Students" name="num_students" id="num_students">
+                <input type="number" placeholder="No. of Students" name="num_students" id="num_students">
             </div>
 
             <div class="eight wide field">
                 <label>Remark</label>
-                <textarea name="remarks" id="remarks" cols="12" rows="3" placeholder="Optional description" onchange="setRemarks(this)"></textarea>
+                <textarea name="remarks" id="remarks" cols="12" rows="3" placeholder="Optional description"></textarea>
 
             </div>
         </div>
@@ -100,24 +109,8 @@
         </div>
         <br>
 
-        <button class="ui button" type="submit" onclick="checkFun()">Submit</button>
+        <button class="ui button" type="submit">Submit</button>
     </form>
-<script>
-    function checkFun(event){
-    event.preventDefault();
-    $('#hostel')
-  .form({
-    fields: {
-      hall_no  : 'empty',
-      program  : 'empty',
-      year     : 'empty',
-      gender   : 'empty',
-      num_students: 'empty'
-    }
-  })
-;
-    }
-</script>
 </div>
 <div class="ui tab segment" data-tab="Allotment">
     <form action="http://localhost:8000/office/officeOfDeanStudents/deleteAllHostelRoomAllotment/" method="post">
@@ -203,15 +196,6 @@ function setRemarks(sel)
 {
     document.getElementById("remarks").value = sel.value;
     console.log(sel.value);
-}
-function test(){
-
-
-jQuery('#hall_capacity1 div').html('');
-
-
-    //$("#hall_capacity1 div").empty();
-    //console.log(capdiv);
 }
 </script>
 <script>
