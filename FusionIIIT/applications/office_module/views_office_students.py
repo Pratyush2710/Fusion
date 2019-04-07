@@ -151,6 +151,7 @@ def hostelRoomAllotment(request):
     num_students=request.POST.get('num_students')
     remarks=request.POST.get('remarks')
     program=request.POST.get('program')
+    print("Remarks: ", remarks)
 
     #if hall_no == '' or year == '' or gender == '' or num_students == '' or program
     if hall_no == '':

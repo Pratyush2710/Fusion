@@ -62,7 +62,7 @@ url(r'^officeOfDeanStudents/deleteAllHostelRoomAllotment', views.deleteAllHostel
     url(r'^officeOfDeanStudents/club_approval', views.clubApproval),
     url(r'^officeOfDeanStudents/club_rejection', views.clubRejection),
     url(r'^officeOfDeanStudents/budgetAllot', views.budgetAllot),
-    url(r'^officeOfDeanStudents/budgetAllotEdit', views.budgetAllotEdit),
+    url(r'^officeOfDeanStudents/budgetAllotEdit', views.budgetAllotEdit , name="budgetAllotEdit"),
     url(r'^officeOfDeanAcademics/$', views.officeOfDeanAcademics, name='officeOfDeanAcademics'),
 
     url(r'^officeOfDeanAcademics/assistantship', views.assistantship, name='assistantship'),
