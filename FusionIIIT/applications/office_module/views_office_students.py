@@ -153,7 +153,17 @@ def hostelRoomAllotment(request):
     program=request.POST.get('program')
 
     #if hall_no == '' or year == '' or gender == '' or num_students == '' or program
-    if hall_no == 'HALL-1-GIRLS' and gender == 'MALE':
+    if hall_no == '':
+        err_msg = 'Hall No. is required'
+    elif year == '':
+        err_msg = 'Year is required'
+    elif gender == '':
+        err_msg = 'Gender is required'
+    elif num_students == '':
+        err_msg = 'No. of Students is required'
+    elif program == '':
+        err_msg = 'Program is required'
+    elif hall_no == 'HALL-1-GIRLS' and gender == 'MALE':
         err_msg = 'Boys cannont reside in ' + hall_no
     elif gender == 'FEMALE' and hall_no != 'HALL-1-GIRLS':
         err_msg = 'Girls cannot reside in ' + hall_no
