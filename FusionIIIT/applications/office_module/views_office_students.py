@@ -169,9 +169,7 @@ def hostelRoomAllotment(request):
         err_msg = 'Girls cannot reside in ' + hall_no
     else:
         print("hall no obtained : ", hall_no)
-        #saving the new allotment
-        p = hostel_allotment(hall_no=hall_no, year=year, gender=gender, number_students=num_students, remark=remarks, program=program)
-        p.save()
+
 
         #changing the capacity
         capacity = hostel_capacity.objects.get(name=hall_no)
@@ -179,6 +177,10 @@ def hostelRoomAllotment(request):
             capacity.current_capacity = int(capacity.current_capacity) - int(num_students)
             capacity.save()
             success_msg = 'Hall Alloted Successfully'
+            # saving the new allotment
+            p = hostel_allotment(hall_no=hall_no, year=year, gender=gender, number_students=num_students,
+                                 remark=remarks, program=program)
+            p.save()
         else:
             err_msg = 'Hostel Limit Exceeded!'
     print("error msg : " + err_msg)
